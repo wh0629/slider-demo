@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>无缝轮播-封装后</title>
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <style>
+        .banner{width: 600px;height: 187px;overflow: hidden;margin: auto;}
+        .imgs{position: relative;}
+        .imgs img{width: 600px;position: absolute;top:0; transition: all 0.3s;transform: translatex(100%)}
+        img.active{left:0;transform: translatex(0px);z-index: 1;}
+        img.leave{transform: translatex(-100%);}
+        img.enter{transform: translatex(100%);}
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="imgs">
+            <img src="img/1.jpg" alt="">
+            <img src="img/2.jpg" alt="">
+            <img src="img/3.jpg" alt="">
+            <img src="img/4.jpg" alt="">
+            <img src="img/5.jpg" alt="">
+        </div>
+    </div>
+</body>
+<script>
+    init();
+    setInterval(function () {
+      makeLeave(getImg(n))
+        .one('transitionend',function (e) {
+            makeEnter($(e.currentTarget))
+          })
+      makeCurrent(getImg(n+1))
+      n+=1;
+    },3000)
+
+    let size = $('.imgs img').length;
+    function number(n) {
+      if(n>size){
+        n = n%size;
+        if(n === 0){
+          n = size;
+        }
+      }
+      return n
+    }
+
+    function getImg(n) {
+      return $(`.imgs img:nth-child(${number(n+1)})`)
+    }
+
+    //初始化
+    function init(){
+      n = 1
+      $(`.images > img:nth-child(${n})`).addClass('active')
+        .siblings().addClass('enter')
+    }
+
+    //正好显示
+    function makeCurrent($node) {
+      return $node.removeClass('enter leave').addClass('active')
+    }
+    //离开
+    function makeLeave($node){
+      return $node.removeClass('active enter').addClass('leave')
+    }
+    //排队进入
+    function makeEnter($node){
+      return $node.addClass('enter').removeClass('leave active')
+    }
+</script>
+</html>
